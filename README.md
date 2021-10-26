@@ -1,4 +1,4 @@
-# Utilizando Feign Client
+# Consumindo um serviço utilizando Feign Client
 
 Neste exemplo serão construídas duas aplicações para fins didáticos mostrando como consumir um serviço utilizando o Feign Client do Spring Cloud.
 
@@ -107,6 +107,80 @@ public class TrabalhadorService {
 	}	
 }
 ```
+
+## Pacote Controller
+O controller é uma classe Java com os métodos Http que recebe as requisições e envia as respostas ao cliente.
+Nessa aplicação terão apenas dois endpoints, um retornará todos os trabalhadores cadastrados e o outro retornará o resultado da busca pelo id do trabalhador.
+
+``` java
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.feign.trabalhador.entities.Trabalhador;
+import br.com.feign.trabalhador.services.TrabalhadorService;
+
+
+@RestController
+@RequestMapping("/trabalhador")
+public class TrabalhadorController {
+	
+	@Autowired
+	private TrabalhadorService trabalhadorService;
+	
+	@GetMapping
+	public ResponseEntity<List<Trabalhador>> getAll(){
+		return ResponseEntity.ok(trabalhadorService.getAll());
+	}
+	
+	@GetMapping("/id/{id}")
+	public ResponseEntity<Trabalhador> getById(@PathVariable(name = "id") Long id){
+		Optional<Trabalhador> trabalhador = trabalhadorService.getById(id);
+		if(trabalhador.isEmpty()){
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(trabalhadorService.getById(id).get());
+	}
+
+}
+```
+
+## Arquivo application.properties do projeto trabalhador
+No arquivo application.properties serão informadas as propriedades para utilizadas na aplicação.
+
+A propriedade spring.jpa.defer-datasource-initialization=true garantirá que, após a criação do esquema do Hibernate ser realizada, o adicionalmente schema.sql será lido para quaisquer alterações adicionais do esquema e o data.sql será executado para preencher o banco de dados. 
+
+Os valores das propriedades spring.application.name e server.port serão muito importantes para a aplicação que irá consumir as informações da aplicação trabalhador.
+
+```
+#Configuração do Banco de Dados H2
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+
+#Habilitar o console do Banco de Dados H2 e seu endereço
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+
+spring.jpa.defer-datasource-initialization=true
+
+#Número da porta da aplicação
+server.port=8001
+
+#Nome da aplicação
+spring.application.name=trabalhador
+```
+
+
+
 
 
 
