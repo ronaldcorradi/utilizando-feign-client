@@ -14,6 +14,14 @@ Neste exemplo serão construídas duas aplicações para fins didáticos mostran
 A primeira aplicação construída será a aplicação Trabalhador. Essa aplicação irá fornecer as informaçãoes que serão consumidas por outra aplicação, a aplicação Folha de Pagamento.
 
 No Spring Tools Suite (STS) acesse o menu File->New->Spring Starter Project. O nome da aplicação como dito acima, será trabalhador.
+As dependências utilizadas nessa aplicação serão :
+
+* H2 Database
+* Spring Data JPA
+* Spring Web
+* Spring Boot Devtools
+
+
 
 
 
