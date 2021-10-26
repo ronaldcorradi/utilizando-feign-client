@@ -178,8 +178,14 @@ server.port=8001
 #Nome da aplicação
 spring.application.name=trabalhador
 ```
+# Criando a aplicação de Folha de Pagamento (folha-pagamento)
+No Spring Tools Suite (STS) acesse o menu File->New->Spring Starter Project. O nome da aplicação será folha-pagamento.
+### As dependências para esse projeto serão as seguintes:
+* Spring Boot DevTools
+* OpegnFeign
+* Spring Web
 
-
+A estrutura do projeto ficou conforme a imagem
 
 
 
