@@ -191,7 +191,7 @@ A estrutura do projeto ficou de acordo com a imagem abaixo
 
 Na classe principal do programa acrescente a anotação @EnableFeignClients.
 
-## Pacote template
+### Pacote template
 No pacote template ficará armazenada a classe Trabalhador. Essa classe terá os mesmos campos da entidade Trabalhador da aplicação trabalhador.
 
 ``` java
@@ -222,7 +222,7 @@ public class Trabalhador {
 }
 ```
 
-## Pacote feign
+### Pacote feign
 Esse pacote irá conter a interface TrabalhadorFeign que terá a responsabilidade de fazer a requisição na aplicação trabalhador.
 
 ```
@@ -244,10 +244,115 @@ public interface WorkerFeign {
 }
 ```
 **@Component** utilizada para a interface ser gerenciada pelo Spring.
+
 **@FeignClient(name = "trabalhador",url = "http://localhost:8001", path ="/trabalhador/id/")**
 * name : nome da aplicação que estamos fazendo a requisição. O nome deve ser o mesmo configurado na propriedade spring.application.name do arquivo application.properties da aplicação que será feita a requisição.
 * url : endereço da aplicação.
 * path : o endpoint que estamos solicitando na requisição.
+
+### Pacote service
+O pacote service conterá a classe FolhaPagamentoService.
+Essa classe injetará a interface TrabalhadorFeign que fará acesso ao endpoint da aplicação trabalhador.
+```
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.feign.folha.feign.TrabalhadorFeign;
+import br.com.feign.folha.template.Trabalhador;
+
+@Service
+public class FolhaPagamentoService {
+	
+	@Autowired
+	private TrabalhadorFeign trabalhadorFeign;
+	
+	public Trabalhador getTrabalhadorById(Long id) {
+		Trabalhador trabalhador = trabalhadorFeign.getById(id).getBody();
+		return trabalhador;
+	}
+
+}
+```
+O método .getBody() vai retornar o corpo da requisição.
+
+### Pacote model
+No pacote model teremos a classe FolhaPagamento. Essa classe terá como atributo o trabalhador e o número de dias trabalhados.
+
+```
+public class FolhaPagamento {
+	
+	private Trabalhador trabalhador;
+	private int diasTrabalhados;
+	
+		
+	public Trabalhador getTrabalhador() {
+		return trabalhador;
+	}
+	public void setTrabalhador(Trabalhador trabalhador) {
+		this.trabalhador = trabalhador;
+	}
+	public int getDiasTrabalhados() {
+		return diasTrabalhados;
+	}
+	public void setDiasTrabalhados(int diasTrabalhados) {
+		this.diasTrabalhados = diasTrabalhados;
+	}
+	
+	public Double getTotal() {
+		return this.diasTrabalhados * this.trabalhador.getValorHoraTrabalhada();
+	}
+
+}
+
+```
+O método getTotal() irá retornar o valor obtido pela multiplicação de dias com o valor da hora do trabalhador.
+
+### Pacote controller
+Armazenará a classe FolhaPagamentoController que terá os endpoints da aplicação.
+
+```
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import br.com.feign.folha.model.FolhaPagamento;
+import br.com.feign.folha.services.FolhaPagamentoService;
+import br.com.feign.folha.template.Trabalhador;
+
+@RestController
+@RequestMapping("/folha")
+public class FolhaPagamentoController {
+
+	@Autowired
+	private FolhaPagamentoService folhaPagamentoService;
+
+	@GetMapping("/trabalhador-id/{trabalhador}")
+	public ResponseEntity<Trabalhador> getTrabalhador(@PathVariable("trabalhador") Long id) {
+		Trabalhador trabalhador = folhaPagamentoService.getTrabalhadorById(id);
+		return ResponseEntity.ok(trabalhador);
+	}
+
+	@GetMapping("/trabalhador-id/{trabalhador}/dias/{dias}")
+	public ResponseEntity<FolhaPagamento> getCalcular(@PathVariable("trabalhador") Long id,
+			@PathVariable("dias") int dias) {
+		FolhaPagamento folhaPagamento = new FolhaPagamento();
+		Trabalhador trabalhador = folhaPagamentoService.getTrabalhadorById(id);
+		folhaPagamento.setDiasTrabalhados(dias);
+		folhaPagamento.setTrabalhador(trabalhador);
+		return ResponseEntity.ok(folhaPagamento);
+
+	}
+
+}
+```
+No arquivo applicatio.properties da aplicação folha-pagamento a única configuração feita foi a alteração do número da porta para 8002.
+
+**Ao executar os projetos, sempre executar primeiro o projeto responsável por fornecer as informações que serão consumidas.**
+
+
 
 
 [![Github Badge](https://img.shields.io/badge/-Github-000?style=flat-square&logo=Github&logoColor=white&link=https://github.com/ronaldcorradi/)](https://github.com/ronaldcorradi/)
