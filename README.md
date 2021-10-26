@@ -25,7 +25,7 @@ A estrutura do projeto ficou conforme a imagem abaixo:
 
 ![estrutura-trabalhador](https://user-images.githubusercontent.com/38817390/138903449-78e6f123-a73c-4aff-8b19-5fa50a1f86fa.png)
 
-## Pacote Entities
+### Pacote Entities
 Nesse pacote ficará a entidade(Entity) Trabalhador.
 
 ``` java
@@ -66,7 +66,7 @@ public class Trabalhador {
 	}	
   ```
   
-  ## Pacote Repositories
+  ### Pacote Repositories
   Ficará a interface responsável pelo acesso ao Banco de Dados. O nome da interface será TrabalhadorRepository
   
   ``` java
@@ -79,7 +79,7 @@ public interface TrabalhadorRepository extends JpaRepository<Trabalhador,Long>{
 }
 ```
 
-## Pacote Service
+### Pacote Service
 Nesse pacote ficará a classe TrabalhadorService. Essa classe que vai ser a facilitadora no acesso dos Entities a partir do framework de persistência e com isso  um Controller passa a enxergar a Service e o repository fica encapsulado nela.
 
 ``` java
@@ -108,7 +108,7 @@ public class TrabalhadorService {
 }
 ```
 
-## Pacote Controller
+### Pacote Controller
 O controller é uma classe Java com os métodos Http que recebe as requisições e envia as respostas ao cliente.
 Nessa aplicação terão apenas dois endpoints, um retornará todos os trabalhadores cadastrados e o outro retornará o resultado da busca pelo id do trabalhador.
 
@@ -151,7 +151,7 @@ public class TrabalhadorController {
 }
 ```
 
-## Arquivo application.properties do projeto trabalhador
+### Arquivo application.properties do projeto trabalhador
 No arquivo application.properties serão informadas as propriedades para utilizadas na aplicação.
 
 A propriedade spring.jpa.defer-datasource-initialization=true garantirá que, após a criação do esquema do Hibernate ser realizada, o adicionalmente schema.sql será lido para quaisquer alterações adicionais do esquema e o data.sql será executado para preencher o banco de dados. 
@@ -178,6 +178,19 @@ server.port=8001
 #Nome da aplicação
 spring.application.name=trabalhador
 ```
+### Criação do arquivo data.sql
+Clique com o botão direito sobre src/main/resources e selecione new->File.
+Nomeie o arquivo para data.sql e insira os comandos abaixo : 
+```
+INSERT INTO trabalhador (nome,valor_hora) VALUES ('Joaquim',20.00);
+INSERT INTO trabalhador (nome,valor_hora) VALUES ('Maria',50.00);
+INSERT INTO trabalhador (nome,valor_hora) VALUES ('José',30.00);
+INSERT INTO trabalhador (nome,valor_hora) VALUES ('Marcos',25.00);
+INSERT INTO trabalhador (nome,valor_hora) VALUES ('Ana',10.00);
+```
+
+Ao rodar a aplicação o banco de dados será populado automaticamente com as informações.
+
 # Criando a aplicação de Folha de Pagamento (folha-pagamento)
 No Spring Tools Suite (STS) acesse o menu File->New->Spring Starter Project. O nome da aplicação será folha-pagamento.
 ### As dependências para esse projeto serão as seguintes:
