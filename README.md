@@ -185,11 +185,69 @@ No Spring Tools Suite (STS) acesse o menu File->New->Spring Starter Project. O n
 * OpegnFeign
 * Spring Web
 
-A estrutura do projeto ficou conforme a imagem
+A estrutura do projeto ficou de acordo com a imagem abaixo
 
+![estrutura-folha](https://user-images.githubusercontent.com/38817390/138925648-029bb6e6-9ad6-4373-bc89-ae08c6464b95.png)
 
+Na classe principal do programa acrescente a anotação @EnableFeignClients.
 
+## Pacote template
+No pacote template ficará armazenada a classe Trabalhador. Essa classe terá os mesmos campos da entidade Trabalhador da aplicação trabalhador.
 
+``` java
+public class Trabalhador {
+	
+	private Long id;	
+	private String nome;
+	private Double valorHoraTrabalhada;
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getNome() {
+		return nome;
+	}
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	public Double getValorHoraTrabalhada() {
+		return valorHoraTrabalhada;
+	}
+	public void setValorHoraTrabalhada(Double valorHoraTrabalhada) {
+		this.valorHoraTrabalhada = valorHoraTrabalhada;
+	}	
+}
+```
+
+## Pacote feign
+Esse pacote irá conter a interface TrabalhadorFeign que terá a responsabilidade de fazer a requisição na aplicação trabalhador.
+
+```
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import br.com.feign.folha.template.Trabalhador;
+
+@Component
+@FeignClient(name = "trabalhador",url = "http://localhost:8001", path ="/trabalhador/id/")
+public interface WorkerFeign {
+	
+	@GetMapping("{id}")
+	ResponseEntity<Trabalhador> getById(@PathVariable ("id")Long id);
+
+}
+```
+**@Component** utilizada para a interface ser gerenciada pelo Spring.
+**@FeignClient(name = "trabalhador",url = "http://localhost:8001", path ="/trabalhador/id/")**
+* name : nome da aplicação que estamos fazendo a requisição. O nome deve ser o mesmo configurado na propriedade spring.application.name do arquivo application.properties da aplicação que será feita a requisição.
+* url : endereço da aplicação.
+* path : o endpoint que estamos solicitando na requisição.
 
 
 [![Github Badge](https://img.shields.io/badge/-Github-000?style=flat-square&logo=Github&logoColor=white&link=https://github.com/ronaldcorradi/)](https://github.com/ronaldcorradi/)
