@@ -1,4 +1,5 @@
 # Consumindo um serviço utilizando Feign Client
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/ronaldcorradi/utilizando-feign-client/blob/main/LICENSE)
 
 Neste exemplo serão construídas duas aplicações para fins didáticos mostrando como consumir um serviço utilizando o Feign Client do Spring Cloud.
 
